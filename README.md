@@ -3,6 +3,14 @@ AWS Lambda Function that updates a Chat Room topic (eg, Slack)
 
 ![Screenshot](https://raw.githubusercontent.com/PagerDuty/pd-oncall-chat-topic/master/screenshot.png)
 
+## MongoDB Instructions
+1. On the command-line switch to the Ops AWS account.
+2. Export the secrets from the "credentials" repo `/secrets/pd-oncall-chat-topic.txt` to your shell.
+3. Run Terraform as usual (plan/apply).
+
+If you need to update the script, simply make your changes (or replace) `lambda/main.py`, zip it up, and place it into the `artifacts/` folder.
+
+To add additional channels: https://github.com/10gen-ops/pd-oncall-chat-topic/blob/master/pagerduty-slack.tf#L101
 
 ## Motivation
 At [PagerDuty](https://www.pagerduty.com/), we
