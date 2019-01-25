@@ -7,6 +7,7 @@ variable "slack_api_token" {}
 variable "pagerduty_schedule_description" {}
 variable "pagerduty_schedule_id" {}
 variable "slack_channel_id" {}
+variable "slack_channel_id_2" {}
 
 resource "aws_ssm_parameter" "pdkey" {
   name  = "${local.app}-pdkey"
@@ -25,9 +26,9 @@ resource "aws_dynamodb_table" "dynamo" {
   billing_mode   = "PROVISIONED"
   read_capacity  = 1
   write_capacity = 1
-  hash_key       = "schedule"
+  hash_key       = "hash_key"
   attribute {
-    name = "schedule"
+    name = "hash_key"
     type = "S"
   }
   tags = {
@@ -98,12 +99,15 @@ resource "aws_iam_role_policy" "iam-policy-ssm" {
 EOF
 }
 
-resource "aws_dynamodb_table_item" "dynamo-item" {
+resource "aws_dynamodb_table_item" "dynamo-item-1" {
   table_name = "${aws_dynamodb_table.dynamo.name}"
   hash_key   = "${aws_dynamodb_table.dynamo.hash_key}"
 
   item = <<ITEM
 {
+  "hash_key": {
+    "S": "1"
+  },
   "sched_name": {
     "S": "${var.pagerduty_schedule_description}"
   },
@@ -112,6 +116,28 @@ resource "aws_dynamodb_table_item" "dynamo-item" {
   },
   "slack": {
     "S": "${var.slack_channel_id}"
+  }
+}
+ITEM
+}
+
+resource "aws_dynamodb_table_item" "dynamo-item-2" {
+  table_name = "${aws_dynamodb_table.dynamo.name}"
+  hash_key   = "${aws_dynamodb_table.dynamo.hash_key}"
+
+  item = <<ITEM
+{
+  "hash_key": {
+    "S": "2"
+  },
+  "sched_name": {
+    "S": "${var.pagerduty_schedule_description}"
+  },
+  "schedule": {
+    "S": "${var.pagerduty_schedule_id}"
+  },
+  "slack": {
+    "S": "${var.slack_channel_id_2}"
   }
 }
 ITEM
